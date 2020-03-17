@@ -1,0 +1,8 @@
+/.cargo
+/bin
+/pkg
+/target
+**/*.rs.bk
+Cargo.lock
+fastly.toml
+rust-toolchain
