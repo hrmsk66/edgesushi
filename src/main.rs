@@ -42,7 +42,7 @@ fn handle_request(req: Request<Body>) -> Result<Response<Body>, Error> {
             //req.send("localhost", NO_CACHE_TTL)
             req.send("server1", ONE_MINUTE_TTL)
         }
-        (&Method::POST, "/orders") => {
+        (&Method::POST, "/") | (&Method::POST, "/order") => {
             match serde_json::from_str::<Vec<Order>>(&req.into_body().into_string()?) {
                 Ok(orders) => {
                     println!("{:?}", orders);
