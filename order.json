@@ -1,5 +1,3 @@
 [ 
-    { "neta": "tuna", "nums": 100 },
-    { "neta": "tea", "nums": 200 },
-    { "neta": "shrimp", "nums": 300 }
+    { "neta": "tuna", "nums": 1000 }
 ]

@@ -1,4 +1,5 @@
-use sushi::*;
+use edgesushi::*;
+use std::time::Duration;
 use fastly::http::{Method, StatusCode};
 use fastly::{downstream_request, Body, Error, Request, RequestExt, Response, ResponseExt};
 use std::convert::TryFrom;
@@ -14,7 +15,7 @@ const ONE_MINUTE_TTL: i32 = 60;
 /// synthetic responses.
 fn handle_request(req: Request<Body>) -> Result<Response<Body>, Error> {
     // Pattern match on the request method and path.
-    match (req.method(), req.uri().path()) {
+    match dbg!((req.method(), req.uri().path())) {
         // If request is `GET /`.
         (&Method::GET, "/") => {
             // Request handling logic could go here...
@@ -24,20 +25,8 @@ fn handle_request(req: Request<Body>) -> Result<Response<Body>, Error> {
                 .body(Body::try_from(text())?)?
             )
         }
-        (&Method::GET, "/ebi") => {
-            Ok(Response::builder()
-                .status(StatusCode::OK)
-                .body(Body::try_from(ebi())?)?
-            )
-        }
-        (&Method::GET, "/toro") => {
-            Ok(Response::builder()
-                .status(StatusCode::OK)
-                .body(Body::try_from(toro())?)?
-            )
-        }
         // If request path starts with `/other/`.
-        (&Method::GET, path) if path.starts_with("/other/") => {
+        (&Method::GET, path) if path.starts_with("/status/200") => {
             // Send request to a different backend and don't cache response.
             //req.send("localhost", NO_CACHE_TTL)
             req.send("server1", ONE_MINUTE_TTL)
@@ -78,5 +67,10 @@ fn main() -> Result<(), Error> {
     let resp = handle_request(req)?;
     // Send the response downstream to the client.
     resp.send_downstream()?;
+
+    // streaming response NOT working
+    // let mut stream = resp.send_downstream_streaming()?;
+    // std::thread::sleep(Duration::from_millis(1000));
+    // stream.append(Body::try_from("Done!")?)?;
     Ok(())
 }
