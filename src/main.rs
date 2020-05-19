@@ -1,10 +1,9 @@
 use edgesushi::*;
-use std::time::Duration;
 use fastly::http::{Method, StatusCode};
 use fastly::{downstream_request, Body, Error, Request, RequestExt, Response, ResponseExt};
 use std::convert::TryFrom;
 
-const ONE_MINUTE_TTL: i32 = 60;
+//const ONE_MINUTE_TTL: i32 = 60;
 // const NO_CACHE_TTL: i32 = -1;
 
 /// Handle the downstream request from the client.
@@ -29,7 +28,7 @@ fn handle_request(req: Request<Body>) -> Result<Response<Body>, Error> {
         (&Method::GET, path) if path.starts_with("/status/200") => {
             // Send request to a different backend and don't cache response.
             //req.send("localhost", NO_CACHE_TTL)
-            req.send("server1", ONE_MINUTE_TTL)
+            req.send("server1")
         }
         (&Method::POST, "/") | (&Method::POST, "/order") => {
             match serde_json::from_str::<Vec<Order>>(&req.into_body().into_string()?) {
